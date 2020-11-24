@@ -371,7 +371,7 @@ public class FCMPlugin extends CordovaPlugin {
         }
 
   private void getDynamicLink(CallbackContext callbackContext) {
-    respondWithDynamicLink(cordova.getActivity().getIntent(), , callbackContext);
+    respondWithDynamicLink(cordova.getActivity().getIntent(), callbackContext);
   }
 
   private void onDynamicLink(CallbackContext callbackContext) {
