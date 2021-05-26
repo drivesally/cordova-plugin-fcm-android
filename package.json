@@ -1,6 +1,6 @@
 {
-  "version": "8.3.0",
-  "name": "cordova-plugin-fcm-ng",
+  "version": "9.3.0",
+  "name": "cordova-plugin-fcm-android",
   "cordova_name": "Cordova FCM Push Plugin NG",
   "description": "Google Firebase Cloud Messaging Cordova Plugin",
   "license": "MIT",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cmgustavo/cordova-plugin-fcm"
+    "url": "https://github.com/drivesally/cordova-plugin-fcm-android"
   },
   "keywords": [
     "ecosystem:cordova",
@@ -22,14 +22,12 @@
     "push",
     "firebase",
     "fcm",
-    "ios",
     "android",
     "cordova",
     "analytics"
   ],
   "platforms": [
-    "android",
-    "ios"
+    "android"
   ],
   "engines": [],
   "englishdoc": ""
