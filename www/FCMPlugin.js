@@ -80,5 +80,15 @@ FCMPlugin.prototype.onDynamicLink = function(success, error) {
 // FIRE READY //
 exec(function(result){ console.log("FCMPlugin NG Ready OK") }, function(result){ console.log("FCMPlugin Ready ERROR") }, "FCMPlugin",'ready',[]);
 
-var fcmPlugin = new FCMPlugin();
-module.exports = fcmPlugin;
+if(!window.plugins) {
+    window.plugins = {};
+}
+if (!window.plugins.FCMPlugin) {
+    window.plugins.FCMPlugin = new FCMPlugin();
+}
+
+if (typeof module != 'undefined' && module.exports) {
+  module.exports = FCMPlugin;
+}
+
+
