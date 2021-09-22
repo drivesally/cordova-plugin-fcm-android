@@ -13,13 +13,13 @@ FCMPlugin.prototype.unsubscribeFromTopic = function( topic, success, error ){
 	exec(success, error, "FCMPlugin", 'unsubscribeFromTopic', [topic]);
 }
 // NOTIFICATION CALLBACK //
-FCMPlugin.prototype.onNotification = function( callback, success, error ){
-	FCMPlugin.prototype.onNotificationReceived = callback;
+FCMPlugin.prototype.onNotification = function( success, error ){
+	//FCMPlugin.prototype.onNotificationReceived = callback; not supported in REACT
 	exec(success, error, "FCMPlugin", 'registerNotification',[]);
 }
 // TOKEN REFRESH CALLBACK //
 FCMPlugin.prototype.onTokenRefresh = function( callback ){
-	FCMPlugin.prototype.onTokenRefreshReceived = callback;
+	FCMPlugin.prototype.onTokenRefreshReceived = callback; // not supported in REACT
 }
 // GET TOKEN //
 FCMPlugin.prototype.getToken = function( success, error ){

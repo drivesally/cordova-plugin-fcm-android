@@ -45,6 +45,8 @@ public class FCMPlugin extends CordovaPlugin {
   public static Boolean notificationCallBackReady = false;
   public static Map<String, Object> lastPush = null;
 
+  public static CallbackContext notificationCallbackContext = null;
+
   public FCMPlugin() {
   }
 
@@ -85,7 +87,7 @@ public class FCMPlugin extends CordovaPlugin {
 
   public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
-    Log.d(TAG, "Execute: " + action);
+    Log.d(TAG, "Execute: test oleg" + action);
 
     try {
       // READY //
@@ -108,14 +110,18 @@ public class FCMPlugin extends CordovaPlugin {
       }
       // NOTIFICATION CALLBACK REGISTER //
       else if (action.equals("registerNotification")) {
+        Log.d(TAG, "Calling registerNotif: " + callbackContext);
+        notificationCallbackContext = callbackContext;
         notificationCallBackReady = true;
         cordova.getActivity().runOnUiThread(new Runnable() {
           public void run() {
+            
             if (lastLink != null) FCMPlugin.sendDynLink(lastLink);
             lastLink = null;
             if (lastPush != null) FCMPlugin.sendPushPayload(lastPush);
             lastPush = null;
-            callbackContext.success();
+            Log.d(TAG, "regiested callback: " + callbackContext);
+            // callbackContext.success("regiested callback");
           }
         });
       }
@@ -237,12 +243,14 @@ public class FCMPlugin extends CordovaPlugin {
       for (String key : payload.keySet()) {
         jo.put(key, payload.get(key));
       }
-      String callBack = "javascript:" + notificationCallBack + "(" + jo.toString() + ")";
+      // String callBack = "javascript:" + notificationCallBack + "(" + jo.toString() + ")";
       if (notificationCallBackReady && gWebView != null) {
-        Log.d(TAG, "Sent Push Notification to view: " + callBack);
-        gWebView.sendJavascript(callBack);
+        // Log.d(TAG, "Sent Push Notification to view: " + callBack);
+        // gWebView.sendJavascript(callBack);
+        Log.d(TAG, "Called callback: " + notificationCallbackContext + ", PAYLOAD:\n" + jo.toString());
+        FCMPlugin.notificationCallbackContext.success(jo.toString());
       } else {
-        Log.d(TAG, "View not ready. Push Notification saved: " + callBack);
+        Log.d(TAG, "View not ready. Push Notification saved: " + FCMPlugin.notificationCallbackContext);
         lastPush = payload;
       }
     } catch (Exception e) {
@@ -389,3 +397,4 @@ public class FCMPlugin extends CordovaPlugin {
     }
   }
 }
+
