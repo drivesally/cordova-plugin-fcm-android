@@ -42,11 +42,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 		}
 		
 		Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> alert = new HashMap<String, Object>();
 		data.put("wasTapped", false);
 		for (String key : remoteMessage.getData().keySet()) {
                 Object value = remoteMessage.getData().get(key);
-                Log.d(TAG, "\tKey: " + key + " Value: " + value);
-				data.put(key, value);
+                if (key.equals("meta_data")) {
+                    Log.d(TAG, "\tKey: " + key + " Value: " + value);
+				    data.put(key, value);
+                }
         }
 		
 		Log.d(TAG, "\tNotification Data: " + data.toString());
@@ -97,3 +100,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 }
+

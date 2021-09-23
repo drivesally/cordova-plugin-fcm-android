@@ -70,12 +70,15 @@ public class FCMPlugin extends CordovaPlugin {
         if (extras != null && extras.size() > 1) {
           if (extras.containsKey("google.message_id")) {
             Log.d(TAG, "Set wasTapped true (app was closed)");
-            extras.putString("wasTapped", "true");
+            // extras.putString("wasTapped", "true");
             Map<String, Object> data = new HashMap<String, Object>();
+            data.put("wastTapped", true);
             for (String key : extras.keySet()) {
               if (extras.get(key) instanceof String) {
-                String value = extras.getString(key);
-                data.put(key, value);
+                if(key.equals("meta_data")){
+                  String value = extras.getString(key);
+                  data.put(key, value);
+                }
               }
             }
             FCMPlugin.sendPushPayload(data);
@@ -87,7 +90,7 @@ public class FCMPlugin extends CordovaPlugin {
 
   public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
-    Log.d(TAG, "Execute: test oleg" + action);
+    Log.d(TAG, "Execute: " + action);
 
     try {
       // READY //
@@ -375,6 +378,7 @@ public class FCMPlugin extends CordovaPlugin {
   public void onDestroy() {
     gWebView = null;
     notificationCallBackReady = false;
+    notificationCallbackContext = null;
   }
 
   @Override
@@ -389,12 +393,15 @@ public class FCMPlugin extends CordovaPlugin {
       data.put("wasTapped", true);
       for (String key : extras.keySet()) {
         if (extras.get(key) instanceof String) {
-          String value = extras.getString(key);
-          data.put(key, value);
+          if(key.equals("meta_data")){
+            String value = extras.getString(key);
+            data.put(key, value);
+          }
         }
       }
       FCMPlugin.sendPushPayload(data);
     }
   }
 }
+
 
