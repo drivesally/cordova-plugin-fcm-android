@@ -9,12 +9,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.apache.cordova.CallbackContext;
@@ -97,14 +98,26 @@ public class FCMPlugin extends CordovaPlugin {
       if (action.equals("ready")) {
         callbackContext.success();
       }
-      // GET TOKEN //
       else if (action.equals("getToken")) {
         cordova.getActivity().runOnUiThread(new Runnable() {
           public void run() {
             try {
-              String token = FirebaseInstanceId.getInstance().getToken();
-              callbackContext.success(FirebaseInstanceId.getInstance().getToken());
-              Log.d(TAG, "Token: " + token);
+              FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                  @Override
+                  public void onComplete(@NonNull Task<String> task) {
+                    if (!task.isSuccessful()) {
+                      Log.d(TAG, "Fetching FCM registration token failed", task.getException());
+                      return;
+                    }
+
+                    // Get new FCM registration token
+                    String registrationId = task.getResult();
+                    // DO your thing with your firebase token
+                    callbackContext.success(registrationId);
+                    Log.d(TAG, "Token: " + registrationId);
+                  }
+                });
+
             } catch (Exception e) {
               Log.d(TAG, "Error retrieving token");
             }
