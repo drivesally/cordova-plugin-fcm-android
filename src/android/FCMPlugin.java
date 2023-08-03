@@ -1,5 +1,7 @@
 package com.gae.scaffolder.plugin;
 
+import org.apache.cordova.PermissionHelper;
+
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 //import android.support.annotation.NonNull;
 import androidx.annotation.NonNull;
+import android.Manifest;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +39,8 @@ public class FCMPlugin extends CordovaPlugin {
 
   private FirebaseAnalytics mFirebaseAnalytics;
 
+  public static final int REQUEST_CODE_ENABLE_PERMISSION = 3331;
+
   private String domainUriPrefix;
   public static String notificationCallBackLink = "FCMPlugin.getDynamicLinkReceived";
   public static Map<String, Object> lastLink = null;
@@ -51,6 +56,15 @@ public class FCMPlugin extends CordovaPlugin {
   public FCMPlugin() {
   }
 
+  public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                        int[] grantResults) {
+    Log.d(TAG, "OLEG on requests " + requestCode + ":: " + permissions);
+    for (int r : grantResults) {
+      Log.d(TAG, "oleg: "+r);
+    }
+
+  }
+
   public void initialize(CordovaInterface cordova, CordovaWebView webView) {
     final Context context = cordova.getActivity().getApplicationContext();
     super.initialize(cordova, webView);
@@ -61,8 +75,17 @@ public class FCMPlugin extends CordovaPlugin {
     Log.d(TAG, "Starting Analytics");
     mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
 
+
     domainUriPrefix = preferences.getString("DYNAMIC_LINK_URIPREFIX", "");
     Log.d(TAG, "Dynamic Link Uri Prefix: " + domainUriPrefix);
+
+    Log.d(TAG, "OLEG ASKING FOR PERMS");
+    if(!PermissionHelper.hasPermission(this, Manifest.permission.POST_NOTIFICATIONS)) {
+      Log.d(TAG, "OLEG ASKING FOR PERMS 2");
+      PermissionHelper.requestPermission(this, REQUEST_CODE_ENABLE_PERMISSION, Manifest.permission.POST_NOTIFICATIONS);
+    } else {
+      Log.d(TAG, "OLEG PERM RESPONDED");
+    }
 
     cordova.getThreadPool().execute(new Runnable() {
       public void run() {
@@ -92,6 +115,15 @@ public class FCMPlugin extends CordovaPlugin {
   public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
     Log.d(TAG, "Execute: " + action);
+
+//    Log.d(TAG, "OLEG ASKING FOR PERMS2");
+//    if(!PermissionHelper.hasPermission(this, Manifest.permission.POST_NOTIFICATIONS)) {
+//      Log.d(TAG, "OLEG ASKING FOR PERMS 22");
+//      PermissionHelper.requestPermission(this, REQUEST_CODE_ENABLE_PERMISSION, Manifest.permission.POST_NOTIFICATIONS);
+//    } else {
+//      Log.d(TAG, "OLEG PERM RESPONDED2");
+//    }
+
 
     try {
       // READY //
@@ -131,7 +163,7 @@ public class FCMPlugin extends CordovaPlugin {
         notificationCallBackReady = true;
         cordova.getActivity().runOnUiThread(new Runnable() {
           public void run() {
-            
+
             if (lastLink != null) FCMPlugin.sendDynLink(lastLink);
             lastLink = null;
             if (lastPush != null) FCMPlugin.sendPushPayload(lastPush);
@@ -416,5 +448,6 @@ public class FCMPlugin extends CordovaPlugin {
     }
   }
 }
+
 
 
