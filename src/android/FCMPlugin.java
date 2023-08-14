@@ -99,10 +99,8 @@ public class FCMPlugin extends CordovaPlugin {
             data.put("wastTapped", true);
             for (String key : extras.keySet()) {
               if (extras.get(key) instanceof String) {
-                if(key.equals("meta_data")){
-                  String value = extras.getString(key);
-                  data.put(key, value);
-                }
+                String value = extras.getString(key);
+                data.put(key, value);
               }
             }
             FCMPlugin.sendPushPayload(data);
@@ -438,10 +436,8 @@ public class FCMPlugin extends CordovaPlugin {
       data.put("wasTapped", true);
       for (String key : extras.keySet()) {
         if (extras.get(key) instanceof String) {
-          if(key.equals("meta_data")){
-            String value = extras.getString(key);
-            data.put(key, value);
-          }
+          String value = extras.getString(key);
+          data.put(key, value);
         }
       }
       FCMPlugin.sendPushPayload(data);
